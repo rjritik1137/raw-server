@@ -7,12 +7,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TokenBucket implements RateLimiter{
-    int maxBucketSize = 100;
+    int maxBucketSize;
 
-    long refillRate = 1;
-    Jedis jedis = null;
-    String rateLimitKey = "ritik";
-    public TokenBucket(){
+    long refillRate;
+    Jedis jedis;
+    String rateLimitKey;
+    public TokenBucket(int maxBucketSize, long refillRate, String rateLimitKey){
+        this.maxBucketSize = maxBucketSize;
+        this.refillRate = refillRate;
+        this.rateLimitKey = rateLimitKey;
        try(JedisPool pool = new JedisPool("localhost", 8888)){
            try (Jedis jedis = pool.getResource()) {
                this.jedis = jedis;
@@ -42,7 +45,17 @@ public class TokenBucket implements RateLimiter{
     }
 
     public void increase() {
-        jedis.incr(rateLimitKey);
+        Long value = jedis.incr(rateLimitKey);
+        if(value > maxBucketSize){
+            jedis.set(rateLimitKey, String.valueOf(maxBucketSize));
+        }
+    }
+
+    public void decrease() {
+        Long value = jedis.decr(rateLimitKey);
+        if(value < 0) {
+            jedis.set(rateLimitKey, "0");
+        }
     }
 
     public boolean isRateLimited(){

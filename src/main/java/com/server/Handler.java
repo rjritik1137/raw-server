@@ -30,4 +30,9 @@ public class Handler {
         }
         return true;
     }
+
+    public boolean rejectRequest() {
+        writer.println("request rejected");
+        return true;
+    }
 }

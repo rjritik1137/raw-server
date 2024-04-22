@@ -1,10 +1,17 @@
 package com.server;
 
+import rateLimit.RateLimiter;
+
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
 public class TcpServer {
+    RateLimiter rateLimiter;
+    TcpServer(){}
+    TcpServer(RateLimiter rateLimiter) {
+        this.rateLimiter = rateLimiter;
+    }
     final int serverPort = 8080;
     public void createServer() {
         try (
@@ -24,7 +31,14 @@ public class TcpServer {
                         try {
                             Handler handler = new Handler(clientSocket);
                             while (true) {
-                                if (!handler.serveRequest()) break;
+                                if(rateLimiter.isRateLimited()) {
+                                    handler.rejectRequest();
+                                }else {
+                                    rateLimiter.increase();
+                                    boolean requestServed = handler.serveRequest();
+                                    rateLimiter.decrease();
+                                    if(!requestServed) break;
+                                }
                             }
                         } catch (IOException e) {
                             throw new RuntimeException(e);
