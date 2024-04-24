@@ -14,7 +14,6 @@ public class Handler {
          writer.println("Client connected!" + clientSocket.getInetAddress().getHostAddress() + " " + clientSocket.getPort());
     }
     public boolean serveRequest() {
-        writer.println("Client connected!" + clientSocket.getInetAddress().getHostAddress() + " " + clientSocket.getPort());
         try {
             String message = reader.readLine();
             if (message == null) {
@@ -22,7 +21,7 @@ public class Handler {
                 writer.close();
                 return false;
             }
-            System.out.println("Received from client: " + message);
+//            System.out.println("Received from client: " + message);
             writer.println("com.server.Hello from the server!");
         } catch (IOException e) {
             //

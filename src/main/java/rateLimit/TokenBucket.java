@@ -2,6 +2,7 @@ package rateLimit;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,12 +32,7 @@ public class TokenBucket implements RateLimiter{
                        } catch (InterruptedException e) {
                            break;
                        }
-                       Long count = jedis.decrBy(rateLimitKey, refillRate);
-                       // If the new counter value is negative, reset it to zero
-                       if (count < 0) {
-                           jedis.set(rateLimitKey, "0");
-                       }
-
+                       jedis.decr(rateLimitKey);
                    }
                }
            }.start();
@@ -44,25 +40,16 @@ public class TokenBucket implements RateLimiter{
        }
     }
 
-    public void increase() {
-        Long value = jedis.incr(rateLimitKey);
-        if(value > maxBucketSize){
-            jedis.set(rateLimitKey, String.valueOf(maxBucketSize));
-        }
+    public Long increase() {
+        return jedis.incr(rateLimitKey);
+
     }
 
-    public void decrease() {
-        Long value = jedis.decr(rateLimitKey);
-        if(value < 0) {
-            jedis.set(rateLimitKey, "0");
-        }
+    public Long decrease() {
+        return jedis.decr(rateLimitKey);
     }
 
     public boolean isRateLimited(){
-        String counter = jedis.get(rateLimitKey);
-        if(counter == null) {
-            return true;
-        }
-        return Long.parseLong(counter) >= maxBucketSize;
+        return increase() >= maxBucketSize;
     }
 }

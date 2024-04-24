@@ -8,6 +8,7 @@ import java.net.Socket;
 
 public class TcpServer {
     RateLimiter rateLimiter;
+    ServerSocket serverSocket;
     TcpServer(){}
     TcpServer(RateLimiter rateLimiter) {
         this.rateLimiter = rateLimiter;
@@ -18,6 +19,7 @@ public class TcpServer {
                 // Create a server socket that listens on the specified port
                 ServerSocket serverSocket = new ServerSocket(serverPort);
         ) {
+            this.serverSocket = serverSocket;
             System.out.println("Server is listening on port " + serverPort);
 
             // Wait for incoming connections
@@ -33,8 +35,8 @@ public class TcpServer {
                             while (true) {
                                 if(rateLimiter.isRateLimited()) {
                                     handler.rejectRequest();
+                                    rateLimiter.decrease();
                                 }else {
-                                    rateLimiter.increase();
                                     boolean requestServed = handler.serveRequest();
                                     rateLimiter.decrease();
                                     if(!requestServed) break;
@@ -49,7 +51,19 @@ public class TcpServer {
                 }
             }
         } catch (IOException e) {
+            try {
+                serverSocket.close();
+            } catch (IOException ex) {
+                throw new RuntimeException(ex);
+            }
             System.err.println("I/O error: " + e.getMessage());
+        }
+    }
+    private void close(){
+        try {
+            serverSocket.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 }
