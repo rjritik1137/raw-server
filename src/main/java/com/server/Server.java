@@ -1,9 +1,7 @@
 package com.server;
 
-import com.client.TcpClient;
-import rateLimit.EmptyRateLimit;
-import rateLimit.RateLimiter;
-import rateLimit.TokenBucket;
+import com.rateLimit.RateLimiter;
+import com.rateLimit.TokenBucket;
 
 public class Server {
     public static void main(String[] args) {

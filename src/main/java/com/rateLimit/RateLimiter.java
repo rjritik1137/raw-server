@@ -1,4 +1,4 @@
-package rateLimit;
+package com.rateLimit;
 
 public interface RateLimiter {
     boolean isRateLimited();

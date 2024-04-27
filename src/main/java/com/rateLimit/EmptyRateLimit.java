@@ -1,4 +1,4 @@
-package rateLimit;
+package com.rateLimit;
 
 public class EmptyRateLimit implements RateLimiter{
     @Override

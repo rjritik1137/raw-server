@@ -1,6 +1,6 @@
 package com.server;
 
-import rateLimit.RateLimiter;
+import com.rateLimit.RateLimiter;
 
 import java.io.*;
 import java.net.ServerSocket;

@@ -1,12 +1,7 @@
-package rateLimit;
+package com.rateLimit;
 
 import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
-import redis.clients.jedis.JedisPoolConfig;
-
-import java.time.Duration;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TokenBucket implements RateLimiter{
     int maxBucketSize;

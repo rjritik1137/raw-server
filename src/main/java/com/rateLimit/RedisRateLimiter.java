@@ -1,4 +1,4 @@
-package rateLimit;
+package com.rateLimit;
 
 import redis.clients.jedis.Jedis;
 
