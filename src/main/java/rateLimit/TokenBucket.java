@@ -4,6 +4,7 @@ import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +33,7 @@ public class TokenBucket implements RateLimiter{
                        } catch (InterruptedException e) {
                            break;
                        }
-                       jedis.decr(rateLimitKey);
+                       decrease();
                    }
                }
            }.start();
@@ -40,12 +41,11 @@ public class TokenBucket implements RateLimiter{
        }
     }
 
-    public Long increase() {
+    public synchronized Long increase() {
         return jedis.incr(rateLimitKey);
-
     }
 
-    public Long decrease() {
+    public synchronized Long decrease() {
         return jedis.decr(rateLimitKey);
     }
 

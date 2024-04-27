@@ -21,8 +21,8 @@ public class Handler {
                 writer.close();
                 return false;
             }
-//            System.out.println("Received from client: " + message);
-            writer.println("com.server.Hello from the server!");
+            System.out.println("Received from client: " + message);
+//            writer.println("com.server.Hello from the server!");
         } catch (IOException e) {
             //
             return false;
@@ -31,7 +31,8 @@ public class Handler {
     }
 
     public boolean rejectRequest() {
-        writer.println("request rejected");
+//        writer.println("request rejected");
+        System.out.println("request rejected");
         return true;
     }
 }

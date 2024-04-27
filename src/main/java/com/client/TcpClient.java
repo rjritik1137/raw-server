@@ -20,10 +20,10 @@ public class TcpClient {
             while(true) {
                 writer.println("Hello from the client!");
                 // Read the server's response
-                String response = reader.readLine();
-                System.out.println("Server response: " + response);
+//                String response = reader.readLine();
+//                System.out.println("Server response: " + response);
                 try {
-                    Thread.sleep(10);
+                    Thread.sleep(1);
                 } catch (InterruptedException e) {
                     break;
                 }
